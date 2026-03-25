@@ -1,0 +1,15 @@
+{
+  "java.jdt.ls.java.home": "/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home",
+  "java.home": "/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home",
+  "gradle.javaDebug": {
+    "clean": true
+  },
+  "gradle.javaHome": "/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home",
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-17",
+      "path": "/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home",
+      "default": true
+    }
+  ]
+}
