@@ -26,21 +26,21 @@ let UsersService = class UsersService {
         const user = this.usersRepository.create(createUserDto);
         return await this.usersRepository.save(user);
     }
-    async findAll() {
-        return await this.usersRepository.find();
+    async findAllByChurch(churchId) {
+        return await this.usersRepository.find({ where: { churchId } });
     }
-    async findOne(id) {
-        const user = await this.usersRepository.findOneBy({ id });
+    async findById(id) {
+        const user = await this.usersRepository.findOne({ where: { id } });
         if (!user) {
             throw new common_1.NotFoundException(`User with ID ${id} not found`);
         }
         return user;
     }
+    async findByPhone(churchId, phone) {
+        return await this.usersRepository.findOne({ where: { churchId, phone } });
+    }
     async update(id, updateUserDto) {
         return await this.usersRepository.update(id, updateUserDto);
-    }
-    async remove(id) {
-        return await this.usersRepository.delete(id);
     }
 };
 exports.UsersService = UsersService;

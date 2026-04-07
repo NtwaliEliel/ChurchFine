@@ -1,13 +1,13 @@
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
+import type { DeepPartial } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 export declare class UsersService {
     private readonly usersRepository;
     constructor(usersRepository: Repository<User>);
-    create(createUserDto: CreateUserDto): Promise<User>;
-    findAll(): Promise<User[]>;
-    findOne(id: string): Promise<User>;
+    create(createUserDto: DeepPartial<User>): Promise<User>;
+    findAllByChurch(churchId: string): Promise<User[]>;
+    findById(id: string): Promise<User>;
+    findByPhone(churchId: string, phone: string): Promise<User | null>;
     update(id: string, updateUserDto: UpdateUserDto): Promise<import("typeorm").UpdateResult>;
-    remove(id: string): Promise<import("typeorm").DeleteResult>;
 }

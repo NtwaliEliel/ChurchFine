@@ -9,31 +9,33 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = exports.UserStatus = exports.UserRole = void 0;
+exports.User = exports.UserRole = void 0;
 const typeorm_1 = require("typeorm");
+const class_transformer_1 = require("class-transformer");
+const church_entity_1 = require("../../churches/entities/church.entity");
 var UserRole;
 (function (UserRole) {
-    UserRole["MEMBER"] = "MEMBER";
-    UserRole["ADMIN"] = "ADMIN";
-    UserRole["SUPER_ADMIN"] = "SUPER_ADMIN";
-    UserRole["FINANCE_OFFICER"] = "FINANCE_OFFICER";
+    UserRole["MEMBER"] = "member";
+    UserRole["ADMIN"] = "admin";
+    UserRole["SUPER_ADMIN"] = "super_admin";
 })(UserRole || (exports.UserRole = UserRole = {}));
-var UserStatus;
-(function (UserStatus) {
-    UserStatus["ACTIVE"] = "ACTIVE";
-    UserStatus["SUSPENDED"] = "SUSPENDED";
-})(UserStatus || (exports.UserStatus = UserStatus = {}));
 let User = class User {
     id;
-    phone_number;
-    full_name;
-    password_hash;
+    churchId;
+    church;
+    email;
+    phone;
+    firstName;
+    lastName;
+    passwordHash;
     role;
-    church_id;
-    is_salaried;
-    status;
-    created_at;
-    updated_at;
+    isActive;
+    createdAt;
+    updatedAt;
+    deletedAt;
+    get fullName() {
+        return `${this.firstName} ${this.lastName}`;
+    }
 };
 exports.User = User;
 __decorate([
@@ -41,49 +43,55 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ unique: true }),
+    (0, typeorm_1.Column)({ name: 'church_id' }),
     __metadata("design:type", String)
-], User.prototype, "phone_number", void 0);
+], User.prototype, "churchId", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
+    (0, typeorm_1.ManyToOne)(() => church_entity_1.Church, { eager: false }),
+    (0, typeorm_1.JoinColumn)({ name: 'church_id' }),
+    __metadata("design:type", church_entity_1.Church)
+], User.prototype, "church", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ length: 255, nullable: true }),
     __metadata("design:type", String)
-], User.prototype, "full_name", void 0);
+], User.prototype, "email", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
+    (0, typeorm_1.Column)({ length: 30 }),
     __metadata("design:type", String)
-], User.prototype, "password_hash", void 0);
+], User.prototype, "phone", void 0);
 __decorate([
-    (0, typeorm_1.Column)({
-        type: 'enum',
-        enum: UserRole,
-        default: UserRole.MEMBER,
-    }),
+    (0, typeorm_1.Column)({ name: 'first_name', length: 100 }),
+    __metadata("design:type", String)
+], User.prototype, "firstName", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'last_name', length: 100 }),
+    __metadata("design:type", String)
+], User.prototype, "lastName", void 0);
+__decorate([
+    (0, class_transformer_1.Exclude)(),
+    (0, typeorm_1.Column)({ name: 'password_hash', length: 255 }),
+    __metadata("design:type", String)
+], User.prototype, "passwordHash", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'enum', enum: UserRole, default: UserRole.MEMBER }),
     __metadata("design:type", String)
 ], User.prototype, "role", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
-], User.prototype, "church_id", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ default: false }),
+    (0, typeorm_1.Column)({ name: 'is_active', default: true }),
     __metadata("design:type", Boolean)
-], User.prototype, "is_salaried", void 0);
+], User.prototype, "isActive", void 0);
 __decorate([
-    (0, typeorm_1.Column)({
-        type: 'enum',
-        enum: UserStatus,
-        default: UserStatus.ACTIVE,
-    }),
-    __metadata("design:type", String)
-], User.prototype, "status", void 0);
-__decorate([
-    (0, typeorm_1.CreateDateColumn)(),
+    (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
-], User.prototype, "created_at", void 0);
+], User.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)(),
+    (0, typeorm_1.UpdateDateColumn)({ name: 'updated_at' }),
     __metadata("design:type", Date)
-], User.prototype, "updated_at", void 0);
+], User.prototype, "updatedAt", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)({ name: 'deleted_at' }),
+    __metadata("design:type", Date)
+], User.prototype, "deletedAt", void 0);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)('users')
 ], User);

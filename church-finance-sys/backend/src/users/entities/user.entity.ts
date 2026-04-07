@@ -1,54 +1,66 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { Exclude } from 'class-transformer';
+import { Church } from '../../churches/entities/church.entity';
 
 export enum UserRole {
-    MEMBER = 'MEMBER',
-    ADMIN = 'ADMIN',
-    SUPER_ADMIN = 'SUPER_ADMIN',
-    FINANCE_OFFICER = 'FINANCE_OFFICER',
-}
-
-export enum UserStatus {
-    ACTIVE = 'ACTIVE',
-    SUSPENDED = 'SUSPENDED',
+  MEMBER = 'member',
+  ADMIN = 'admin',
+  SUPER_ADMIN = 'super_admin',
 }
 
 @Entity('users')
 export class User {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column({ unique: true })
-    phone_number: string;
+  @Column({ name: 'church_id' })
+  churchId: string;
 
-    @Column({ nullable: true })
-    full_name: string;
+  @ManyToOne(() => Church, { eager: false })
+  @JoinColumn({ name: 'church_id' })
+  church: Church;
 
-    @Column({ nullable: true })
-    password_hash: string;
+  @Column({ length: 255, nullable: true })
+  email: string;
 
-    @Column({
-        type: 'enum',
-        enum: UserRole,
-        default: UserRole.MEMBER,
-    })
-    role: UserRole;
+  @Column({ length: 30 })
+  phone: string;
 
-    @Column({ nullable: true })
-    church_id: string; // Will be FK later
+  @Column({ name: 'first_name', length: 100 })
+  firstName: string;
 
-    @Column({ default: false })
-    is_salaried: boolean;
+  @Column({ name: 'last_name', length: 100 })
+  lastName: string;
 
-    @Column({
-        type: 'enum',
-        enum: UserStatus,
-        default: UserStatus.ACTIVE,
-    })
-    status: UserStatus;
+  @Exclude()
+  @Column({ name: 'password_hash', length: 255 })
+  passwordHash: string;
 
-    @CreateDateColumn()
-    created_at: Date;
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.MEMBER })
+  role: UserRole;
 
-    @UpdateDateColumn()
-    updated_at: Date;
+  @Column({ name: 'is_active', default: true })
+  isActive: boolean;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt: Date;
+
+  get fullName(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
 }

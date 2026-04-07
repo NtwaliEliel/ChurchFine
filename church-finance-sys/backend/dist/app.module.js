@@ -9,10 +9,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
+const schedule_1 = require("@nestjs/schedule");
+const throttler_1 = require("@nestjs/throttler");
 const typeorm_1 = require("@nestjs/typeorm");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const users_module_1 = require("./users/users.module");
+const auth_module_1 = require("./auth/auth.module");
+const churches_module_1 = require("./churches/churches.module");
+const giving_categories_module_1 = require("./giving-categories/giving-categories.module");
+const transactions_module_1 = require("./transactions/transactions.module");
+const payments_module_1 = require("./payments/payments.module");
+const tithing_module_1 = require("./tithing/tithing.module");
+const admin_module_1 = require("./admin/admin.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -22,6 +31,13 @@ exports.AppModule = AppModule = __decorate([
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
             }),
+            schedule_1.ScheduleModule.forRoot(),
+            throttler_1.ThrottlerModule.forRoot([
+                {
+                    ttl: 60_000,
+                    limit: 120,
+                },
+            ]),
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [config_1.ConfigModule],
                 useFactory: (configService) => ({
@@ -32,11 +48,18 @@ exports.AppModule = AppModule = __decorate([
                     password: configService.get('DB_PASS'),
                     database: configService.get('DB_NAME'),
                     entities: [__dirname + '/**/*.entity{.ts,.js}'],
-                    synchronize: true,
+                    synchronize: configService.get('DB_SYNCHRONIZE') === 'true',
                 }),
                 inject: [config_1.ConfigService],
             }),
             users_module_1.UsersModule,
+            auth_module_1.AuthModule,
+            churches_module_1.ChurchesModule,
+            giving_categories_module_1.GivingCategoriesModule,
+            transactions_module_1.TransactionsModule,
+            payments_module_1.PaymentsModule,
+            tithing_module_1.TithingModule,
+            admin_module_1.AdminModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
